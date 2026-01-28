@@ -3,31 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SenseQuest - Five Senses Adventure</title>
+    <title>SenseQuest - Ultimate Five Senses Adventure</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Particle Background -->
-    <div class="particles" id="particles"></div>
+    <!-- Animated Background -->
+    <div class="background-scene">
+        <div class="particles" id="particles"></div>
+        <div class="stars" id="stars"></div>
+        <div class="waves"></div>
+    </div>
+    
+    <!-- Sound Toggle -->
+    <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">
+        <span class="sound-icon">🔊</span>
+    </button>
     
     <!-- Main Game Container -->
     <div class="game-wrapper">
         <!-- Start Screen -->
         <div class="screen start-screen active">
             <div class="logo-container">
-                <div class="logo-circle pulse">
+                <div class="logo-circle">
+                    <div class="logo-ring"></div>
+                    <div class="logo-ring"></div>
+                    <div class="logo-ring"></div>
                     <span class="logo-emoji">👁️</span>
                 </div>
                 <h1 class="game-title">
-                    <span class="title-word" style="--delay: 0s">Sense</span><span class="title-word" style="--delay: 0.1s">Quest</span>
+                    <span class="title-letter">S</span>
+                    <span class="title-letter">e</span>
+                    <span class="title-letter">n</span>
+                    <span class="title-letter">s</span>
+                    <span class="title-letter">e</span>
+                    <span class="title-letter">Q</span>
+                    <span class="title-letter">u</span>
+                    <span class="title-letter">e</span>
+                    <span class="title-letter">s</span>
+                    <span class="title-letter">t</span>
                 </h1>
-                <p class="subtitle">An Adventure Through Your Five Senses</p>
+                <p class="subtitle">Master Your Five Senses</p>
             </div>
             
-            <div class="intro-card slide-up" style="--delay: 0.3s">
+            <div class="difficulty-selector">
+                <h3>Choose Your Adventure</h3>
+                <div class="difficulty-cards">
+                    <div class="difficulty-card" onclick="selectDifficulty('easy')">
+                        <div class="difficulty-icon">🌱</div>
+                        <h4>Easy</h4>
+                        <p>5 objects • More time</p>
+                        <div class="difficulty-badge">Beginner</div>
+                    </div>
+                    <div class="difficulty-card featured" onclick="selectDifficulty('normal')">
+                        <div class="difficulty-icon">⭐</div>
+                        <h4>Normal</h4>
+                        <p>10 objects • Standard</p>
+                        <div class="difficulty-badge">Recommended</div>
+                    </div>
+                    <div class="difficulty-card" onclick="selectDifficulty('hard')">
+                        <div class="difficulty-icon">🔥</div>
+                        <h4>Hard</h4>
+                        <p>15 objects • Fast pace</p>
+                        <div class="difficulty-badge">Expert</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="intro-card">
                 <div class="card-header">
                     <span class="icon">📚</span>
                     <h2>How to Play</h2>
@@ -35,118 +80,191 @@
                 <div class="steps">
                     <div class="step">
                         <span class="step-number">1</span>
-                        <p>Select an object by clicking on it</p>
+                        <p>Select an object to observe</p>
                     </div>
                     <div class="step">
                         <span class="step-number">2</span>
-                        <p>Match it with the sense you use to observe it</p>
+                        <p>Match it with the correct sense</p>
                     </div>
                     <div class="step">
                         <span class="step-number">3</span>
-                        <p>Complete all matches to win!</p>
+                        <p>Build combos for bonus points!</p>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        <p>Use power-ups strategically</p>
                     </div>
                 </div>
                 
-                <div class="senses-preview">
-                    <div class="sense-badge">👁️ Sight</div>
-                    <div class="sense-badge">👂 Hearing</div>
-                    <div class="sense-badge">👃 Smell</div>
-                    <div class="sense-badge">👅 Taste</div>
-                    <div class="sense-badge">✋ Touch</div>
+                <div class="power-ups-preview">
+                    <div class="power-up-mini">⏱️ +Time</div>
+                    <div class="power-up-mini">💡 Hint</div>
+                    <div class="power-up-mini">❌ Skip</div>
                 </div>
             </div>
             
-            <button class="btn-primary slide-up" style="--delay: 0.5s" onclick="startGame()">
-                <span class="btn-text">Begin Adventure</span>
+            <button class="btn-primary pulse-btn" id="startBtn" onclick="startGame()">
+                <span class="btn-text">Begin Quest</span>
                 <span class="btn-icon">→</span>
+                <div class="btn-shine"></div>
             </button>
             
-            <div class="curriculum-tag">Unit 1: Scientific Skills</div>
+            <div class="stats-preview">
+                <div class="stat-mini">🏆 High Score: <span id="highScore">0</span></div>
+                <div class="stat-mini">🎯 Best Combo: <span id="bestComboEver">0</span>x</div>
+            </div>
+            
+            <div class="curriculum-tag">Unit 1: Scientific Skills • Malaysian Science Year 1</div>
         </div>
 
         <!-- Game Screen -->
         <div class="screen game-screen">
+            <!-- Header with Stats -->
             <div class="game-header">
+                <div class="level-badge" id="levelBadge">Level 1</div>
                 <h2 class="section-heading">Match the Objects!</h2>
                 
-                <div class="stats-bar">
-                    <div class="stat">
+                <div class="stats-grid">
+                    <div class="stat-card">
                         <span class="stat-icon">⏱️</span>
                         <div class="stat-content">
                             <span class="stat-label">Time</span>
-                            <span class="stat-value" id="timer">0s</span>
+                            <div class="stat-value-wrapper">
+                                <span class="stat-value" id="timer">0s</span>
+                                <div class="timer-bar" id="timerBar"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat">
+                    <div class="stat-card">
                         <span class="stat-icon">🎯</span>
                         <div class="stat-content">
                             <span class="stat-label">Score</span>
                             <span class="stat-value" id="score">0</span>
                         </div>
                     </div>
-                    <div class="stat">
+                    <div class="stat-card">
+                        <span class="stat-icon">🔥</span>
+                        <div class="stat-content">
+                            <span class="stat-label">Combo</span>
+                            <span class="stat-value combo-counter" id="combo">0x</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
                         <span class="stat-icon">⭐</span>
                         <div class="stat-content">
-                            <span class="stat-label">Rating</span>
+                            <span class="stat-label">Stars</span>
                             <span class="stat-value" id="stars">★★★</span>
                         </div>
                     </div>
                 </div>
             </div>
             
+            <!-- Power-ups Bar -->
+            <div class="power-ups-bar">
+                <button class="power-up-btn" id="timeBoost" onclick="usePowerUp('time')" disabled>
+                    <span class="power-up-icon">⏱️</span>
+                    <span class="power-up-name">+10s</span>
+                    <span class="power-up-count" id="timeCount">3</span>
+                </button>
+                <button class="power-up-btn" id="hintBtn" onclick="usePowerUp('hint')" disabled>
+                    <span class="power-up-icon">💡</span>
+                    <span class="power-up-name">Hint</span>
+                    <span class="power-up-count" id="hintCount">2</span>
+                </button>
+                <button class="power-up-btn" id="skipBtn" onclick="usePowerUp('skip')" disabled>
+                    <span class="power-up-icon">❌</span>
+                    <span class="power-up-name">Skip</span>
+                    <span class="power-up-count" id="skipCount">1</span>
+                </button>
+            </div>
+            
+            <!-- Progress -->
             <div class="progress-container">
                 <div class="progress-track">
                     <div class="progress-fill" id="progressBar">
                         <span class="progress-text" id="progressText">0/10</span>
+                        <div class="progress-shine"></div>
                     </div>
                 </div>
+                <div class="milestone-markers" id="milestones"></div>
             </div>
             
+            <!-- Feedback -->
             <div class="feedback-container">
                 <div class="feedback" id="feedback"></div>
+                <div class="combo-display" id="comboDisplay"></div>
             </div>
             
+            <!-- Game Grid -->
             <div class="game-grid">
                 <div class="objects-panel">
-                    <h3 class="panel-title">
-                        <span class="panel-icon">🎯</span>
-                        Objects
-                    </h3>
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <span class="panel-icon">🎯</span>
+                            Objects
+                        </h3>
+                        <div class="panel-counter" id="objectsRemaining">10 left</div>
+                    </div>
                     <div class="objects-container" id="objectCards"></div>
                 </div>
                 
-                <div class="divider"></div>
+                <div class="divider">
+                    <div class="divider-icon">✨</div>
+                </div>
                 
                 <div class="senses-panel">
-                    <h3 class="panel-title">
-                        <span class="panel-icon">✨</span>
-                        Your Senses
-                    </h3>
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <span class="panel-icon">👋</span>
+                            Your Senses
+                        </h3>
+                        <div class="hint-indicator" id="hintIndicator"></div>
+                    </div>
                     <div class="senses-container">
                         <div class="sense-option" data-sense="sight" onclick="checkAnswer('sight')">
                             <div class="sense-icon-large">👁️</div>
-                            <span class="sense-name">Sight</span>
+                            <div class="sense-content">
+                                <span class="sense-name">Sight</span>
+                                <span class="sense-desc">See & Observe</span>
+                            </div>
                             <div class="sense-glow"></div>
+                            <div class="sense-particles"></div>
                         </div>
                         <div class="sense-option" data-sense="hearing" onclick="checkAnswer('hearing')">
                             <div class="sense-icon-large">👂</div>
-                            <span class="sense-name">Hearing</span>
+                            <div class="sense-content">
+                                <span class="sense-name">Hearing</span>
+                                <span class="sense-desc">Listen & Detect</span>
+                            </div>
                             <div class="sense-glow"></div>
+                            <div class="sense-particles"></div>
                         </div>
                         <div class="sense-option" data-sense="smell" onclick="checkAnswer('smell')">
                             <div class="sense-icon-large">👃</div>
-                            <span class="sense-name">Smell</span>
+                            <div class="sense-content">
+                                <span class="sense-name">Smell</span>
+                                <span class="sense-desc">Sniff & Identify</span>
+                            </div>
                             <div class="sense-glow"></div>
+                            <div class="sense-particles"></div>
                         </div>
                         <div class="sense-option" data-sense="taste" onclick="checkAnswer('taste')">
                             <div class="sense-icon-large">👅</div>
-                            <span class="sense-name">Taste</span>
+                            <div class="sense-content">
+                                <span class="sense-name">Taste</span>
+                                <span class="sense-desc">Savor & Experience</span>
+                            </div>
                             <div class="sense-glow"></div>
+                            <div class="sense-particles"></div>
                         </div>
                         <div class="sense-option" data-sense="touch" onclick="checkAnswer('touch')">
                             <div class="sense-icon-large">✋</div>
-                            <span class="sense-name">Touch</span>
+                            <div class="sense-content">
+                                <span class="sense-name">Touch</span>
+                                <span class="sense-desc">Feel & Sense</span>
+                            </div>
                             <div class="sense-glow"></div>
+                            <div class="sense-particles"></div>
                         </div>
                     </div>
                 </div>
@@ -156,46 +274,93 @@
         <!-- End Screen -->
         <div class="screen end-screen">
             <div class="celebration-container">
-                <div class="confetti" id="confetti"></div>
-                <div class="trophy-icon" id="trophyIcon">🏆</div>
+                <div class="confetti-container" id="confetti"></div>
+                <div class="fireworks" id="fireworks"></div>
+                
+                <div class="trophy-display">
+                    <div class="trophy-glow"></div>
+                    <div class="trophy-icon" id="trophyIcon">🏆</div>
+                    <div class="rank-badge" id="rankBadge">S Rank</div>
+                </div>
+                
                 <h1 class="end-title">Quest Complete!</h1>
                 
-                <div class="score-display">
-                    <div class="final-score">
+                <div class="score-showcase">
+                    <div class="final-score-card">
                         <span class="score-label">Final Score</span>
                         <span class="score-number" id="finalScore">0</span>
-                    </div>
-                    <div class="star-rating" id="finalStars"></div>
-                </div>
-                
-                <div class="end-stats">
-                    <div class="end-stat">
-                        <span class="end-stat-icon">⏱️</span>
-                        <div>
-                            <div class="end-stat-label">Time Taken</div>
-                            <div class="end-stat-value"><span id="finalTime">0</span>s</div>
+                        <div class="score-breakdown">
+                            <span>Base: <b id="baseScore">0</b></span>
+                            <span>Combo: <b id="comboBonus">0</b></span>
+                            <span>Speed: <b id="speedBonus">0</b></span>
                         </div>
                     </div>
-                    <div class="end-stat">
-                        <span class="end-stat-icon">✅</span>
+                    <div class="star-showcase" id="finalStars"></div>
+                </div>
+                
+                <div class="stats-showcase">
+                    <div class="stat-item">
+                        <span class="stat-icon">⏱️</span>
                         <div>
-                            <div class="end-stat-label">Accuracy</div>
-                            <div class="end-stat-value"><span id="accuracy">100</span>%</div>
+                            <div class="stat-label">Time</div>
+                            <div class="stat-value"><span id="finalTime">0</span>s</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">✅</span>
+                        <div>
+                            <div class="stat-label">Accuracy</div>
+                            <div class="stat-value"><span id="accuracy">100</span>%</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">🔥</span>
+                        <div>
+                            <div class="stat-label">Best Combo</div>
+                            <div class="stat-value"><span id="bestCombo">0</span>x</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">💎</span>
+                        <div>
+                            <div class="stat-label">Perfect</div>
+                            <div class="stat-value"><span id="perfectMatches">0</span></div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="achievement-card">
+                <div class="achievements-container">
+                    <h3>🏅 Achievements Unlocked</h3>
+                    <div class="achievements-grid" id="achievementsList"></div>
+                </div>
+                
+                <div class="level-up-card" id="levelUpCard">
                     <h3 id="achievementTitle">🌟 Senses Master!</h3>
-                    <p id="achievementMessage">You've mastered the art of observation using all five senses!</p>
+                    <p id="achievementMessage">You've mastered the art of observation!</p>
                 </div>
                 
                 <div class="end-actions">
+                    <button class="btn-secondary" onclick="viewStats()">
+                        <span class="btn-icon">📊</span>
+                        <span class="btn-text">View Stats</span>
+                    </button>
                     <button class="btn-primary" onclick="restartGame()">
                         <span class="btn-text">Play Again</span>
                         <span class="btn-icon">🔄</span>
+                        <div class="btn-shine"></div>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div class="achievement-popup" id="achievementPopup">
+        <div class="achievement-content">
+            <span class="achievement-icon" id="popupIcon">🏆</span>
+            <div class="achievement-text">
+                <div class="achievement-name" id="popupName">Achievement Unlocked!</div>
+                <div class="achievement-desc" id="popupDesc">Description</div>
             </div>
         </div>
     </div>
