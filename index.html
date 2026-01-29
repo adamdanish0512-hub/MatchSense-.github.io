@@ -3,76 +3,947 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SenseQuest - Ultimate Five Senses Adventure</title>
+    <title>MatchSense! - Five Senses Adventure</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+/* ====================================
+   reset and base styles
+   ==================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color Palette - Vibrant Nature Theme */
+    --primary: #FF6B9D;
+    --primary-dark: #E94E7B;
+    --secondary: #FFA500;
+    --accent-1: #4ECDC4;
+    --accent-2: #95E1D3;
+    --accent-3: #FFE66D;
+    --success: #26de81;
+    --error: #fc5c65;
+    --dark: #2C3A47;
+    --light: #F8F9FA;
+    --white: #FFFFFF;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    --gradient-warm: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    --gradient-cool: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+    --gradient-success: linear-gradient(135deg, #26de81 0%, #20bf6b 100%);
+    --gradient-sunset: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #ee5a6f 100%);
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.2);
+    
+    /* Transitions */
+    --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+body {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ====================================
+   particle background
+   ==================================== */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    animation: float linear infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ====================================
+   game wrapper
+   ==================================== */
+.game-wrapper {
+    background: var(--white);
+    border-radius: 32px;
+    max-width: 1200px;
+    width: 100%;
+    padding: 40px;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    z-index: 1;
+    animation: slideIn 0.6s var(--transition-bounce);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ====================================
+   transition between screens
+   ==================================== */
+.screen {
+    display: none;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ====================================
+   start screen
+   ==================================== */
+.logo-container {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.logo-circle {
+    width: 120px;
+    height: 120px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+}
+
+.logo-emoji {
+    font-size: 64px;
+    animation: rotate 3s ease-in-out infinite;
+}
+
+@keyframes rotate {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(5deg) scale(1.1); }
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.game-title {
+    font-family: 'Fredoka', cursive;
+    font-size: 64px;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+.title-word {
+    display: inline-block;
+    animation: bounceIn 0.8s var(--transition-bounce);
+    animation-delay: var(--delay);
+    animation-fill-mode: both;
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3) translateY(-40px);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.subtitle {
+    font-size: 20px;
+    color: #6c757d;
+    font-weight: 400;
+}
+
+.intro-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 32px;
+    border: 2px solid rgba(102, 126, 234, 0.1);
+}
+
+.slide-up {
+    animation: slideUp 0.6s var(--transition-bounce);
+    animation-delay: var(--delay);
+    animation-fill-mode: both;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.card-header .icon {
+    font-size: 32px;
+}
+
+.card-header h2 {
+    font-family: 'Fredoka', cursive;
+    font-size: 28px;
+    color: var(--dark);
+}
+
+.steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+}
+
+.step:hover {
+    transform: translateX(8px);
+    box-shadow: var(--shadow-md);
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.step p {
+    font-size: 16px;
+    color: var(--dark);
+    margin: 0;
+}
+
+.senses-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+
+.sense-badge {
+    padding: 12px 20px;
+    background: var(--white);
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dark);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+}
+
+.sense-badge:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 20px 40px;
+    background: var(--gradient-primary);
+    color: var(--white);
+    border: none;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Fredoka', cursive;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+}
+
+.btn-primary:active {
+    transform: translateY(-2px);
+}
+
+.btn-icon {
+    font-size: 24px;
+    transition: transform var(--transition-base);
+}
+
+.btn-primary:hover .btn-icon {
+    transform: translateX(4px);
+}
+
+.curriculum-tag {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* ====================================
+   GAME SCREEN
+   ==================================== */
+.game-header {
+    margin-bottom: 32px;
+}
+
+.section-heading {
+    font-family: 'Fredoka', cursive;
+    font-size: 36px;
+    text-align: center;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 24px;
+}
+
+.stats-bar {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 16px 24px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+    min-width: 140px;
+}
+
+.stat-icon {
+    font-size: 32px;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: 'Fredoka', cursive;
+    color: var(--dark);
+}
+
+.progress-container {
+    margin-bottom: 24px;
+}
+
+.progress-track {
+    background: #e9ecef;
+    height: 40px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+    background: var(--gradient-primary);
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.progress-text {
+    color: var(--white);
+    font-weight: 700;
+    font-family: 'Fredoka', cursive;
+    font-size: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.feedback-container {
+    min-height: 60px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feedback {
+    padding: 16px 32px;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    animation: popIn 0.3s var(--transition-bounce);
+}
+
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.feedback.correct {
+    background: linear-gradient(135deg, #26de81 0%, #20bf6b 100%);
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(38, 222, 129, 0.4);
+}
+
+.feedback.wrong {
+    background: linear-gradient(135deg, #fc5c65 0%, #eb3b5a 100%);
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(252, 92, 101, 0.4);
+}
+
+.feedback.neutral {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+    color: var(--white);
+}
+
+/* Game Grid */
+.game-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.divider {
+    width: 2px;
+    background: linear-gradient(180deg, transparent 0%, #dee2e6 20%, #dee2e6 80%, transparent 100%);
+    min-height: 400px;
+}
+
+.panel-title {
+    font-family: 'Fredoka', cursive;
+    font-size: 24px;
+    color: var(--dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.panel-icon {
+    font-size: 28px;
+}
+
+/* Objects */
+.objects-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.object-card {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    padding: 20px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark);
+    border: 3px solid transparent;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.object-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    transition: left 0.5s;
+}
+
+.object-card:hover::before {
+    left: 100%;
+}
+
+.object-card:hover {
+    transform: translateX(-8px) scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+.object-card.selected {
+    border-color: #20bf6b;
+    background: linear-gradient(135deg, #26de81 0%, #20bf6b 100%);
+    color: var(--white);
+    transform: translateX(-12px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(32, 191, 107, 0.4);
+}
+
+.object-card.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    transform: scale(0.95);
+}
+
+/* Senses */
+.senses-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sense-option {
+    background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+    padding: 20px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.sense-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: all 0.6s;
+}
+
+.sense-option:hover .sense-glow {
+    width: 300px;
+    height: 300px;
+}
+
+.sense-option:hover {
+    transform: translateX(8px) scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+.sense-option:active {
+    transform: translateX(12px) scale(0.98);
+}
+
+.sense-icon-large {
+    font-size: 36px;
+    flex-shrink: 0;
+}
+
+.sense-name {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Fredoka', cursive;
+}
+
+/* ====================================
+   end screen
+   ==================================== */
+.celebration-container {
+    text-align: center;
+    position: relative;
+}
+
+.confetti {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--primary);
+    animation: confettiFall 3s linear;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(600px) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+.trophy-icon {
+    font-size: 120px;
+    margin: 0 auto 24px;
+    animation: trophy 1s var(--transition-bounce);
+}
+
+@keyframes trophy {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.end-title {
+    font-family: 'Fredoka', cursive;
+    font-size: 48px;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 32px;
+}
+
+.score-display {
+    margin-bottom: 32px;
+}
+
+.final-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.score-label {
+    font-size: 16px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.score-number {
+    font-size: 72px;
+    font-family: 'Fredoka', cursive;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: countUp 1s ease-out;
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.star-rating {
+    font-size: 48px;
+    letter-spacing: 8px;
+    animation: starPop 0.8s var(--transition-bounce) 0.3s both;
+}
+
+@keyframes starPop {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.end-stats {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.end-stat {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px 32px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-sm);
+    min-width: 200px;
+}
+
+.end-stat-icon {
+    font-size: 40px;
+}
+
+.end-stat-label {
+    font-size: 12px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.end-stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    font-family: 'Fredoka', cursive;
+    color: var(--dark);
+}
+
+.achievement-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 32px;
+    border-radius: 24px;
+    margin-bottom: 32px;
+    color: var(--white);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.achievement-card h3 {
+    font-family: 'Fredoka', cursive;
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+.achievement-card p {
+    font-size: 18px;
+    opacity: 0.95;
+    line-height: 1.6;
+}
+
+.end-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+/* ====================================
+   responsive design
+   ==================================== */
+@media (max-width: 968px) {
+    .game-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .divider {
+        display: none;
+    }
+    
+    .game-title {
+        font-size: 48px;
+    }
+    
+    .section-heading {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 640px) {
+    .game-wrapper {
+        padding: 24px;
+    }
+    
+    .game-title {
+        font-size: 36px;
+    }
+    
+    .stats-bar {
+        flex-direction: column;
+    }
+    
+    .stat {
+        width: 100%;
+    }
+    
+    .end-stats {
+        flex-direction: column;
+    }
+    
+    .end-stat {
+        width: 100%;
+    }
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+    </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="background-scene">
-        <div class="particles" id="particles"></div>
-        <div class="stars" id="stars"></div>
-        <div class="waves"></div>
-    </div>
-    
-    <!-- Sound Toggle -->
-    <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">
-        <span class="sound-icon">🔊</span>
-    </button>
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
     
     <!-- Main Game Container -->
     <div class="game-wrapper">
         <!-- Start Screen -->
         <div class="screen start-screen active">
             <div class="logo-container">
-                <div class="logo-circle">
-                    <div class="logo-ring"></div>
-                    <div class="logo-ring"></div>
-                    <div class="logo-ring"></div>
+                <div class="logo-circle pulse">
                     <span class="logo-emoji">👁️</span>
                 </div>
                 <h1 class="game-title">
-                    <span class="title-letter">S</span>
-                    <span class="title-letter">e</span>
-                    <span class="title-letter">n</span>
-                    <span class="title-letter">s</span>
-                    <span class="title-letter">e</span>
-                    <span class="title-letter">Q</span>
-                    <span class="title-letter">u</span>
-                    <span class="title-letter">e</span>
-                    <span class="title-letter">s</span>
-                    <span class="title-letter">t</span>
+                    <span class="title-word" style="--delay: 0s">Sense</span><span class="title-word" style="--delay: 0.1s">Quest</span>
                 </h1>
-                <p class="subtitle">Master Your Five Senses</p>
+                <p class="subtitle">An Adventure Through Your Five Senses</p>
             </div>
             
-            <div class="difficulty-selector">
-                <h3>Choose Your Adventure</h3>
-                <div class="difficulty-cards">
-                    <div class="difficulty-card" onclick="selectDifficulty('easy')">
-                        <div class="difficulty-icon">🌱</div>
-                        <h4>Easy</h4>
-                        <p>5 objects • More time</p>
-                        <div class="difficulty-badge">Beginner</div>
-                    </div>
-                    <div class="difficulty-card featured" onclick="selectDifficulty('normal')">
-                        <div class="difficulty-icon">⭐</div>
-                        <h4>Normal</h4>
-                        <p>10 objects • Standard</p>
-                        <div class="difficulty-badge">Recommended</div>
-                    </div>
-                    <div class="difficulty-card" onclick="selectDifficulty('hard')">
-                        <div class="difficulty-icon">🔥</div>
-                        <h4>Hard</h4>
-                        <p>15 objects • Fast pace</p>
-                        <div class="difficulty-badge">Expert</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="intro-card">
+            <div class="intro-card slide-up" style="--delay: 0.3s">
                 <div class="card-header">
                     <span class="icon">📚</span>
                     <h2>How to Play</h2>
@@ -80,191 +951,118 @@
                 <div class="steps">
                     <div class="step">
                         <span class="step-number">1</span>
-                        <p>Select an object to observe</p>
+                        <p>Select an object by clicking on it</p>
                     </div>
                     <div class="step">
                         <span class="step-number">2</span>
-                        <p>Match it with the correct sense</p>
+                        <p>Match it with the sense you use to observe it</p>
                     </div>
                     <div class="step">
                         <span class="step-number">3</span>
-                        <p>Build combos for bonus points!</p>
-                    </div>
-                    <div class="step">
-                        <span class="step-number">4</span>
-                        <p>Use power-ups strategically</p>
+                        <p>Complete all matches to win!</p>
                     </div>
                 </div>
                 
-                <div class="power-ups-preview">
-                    <div class="power-up-mini">⏱️ +Time</div>
-                    <div class="power-up-mini">💡 Hint</div>
-                    <div class="power-up-mini">❌ Skip</div>
+                <div class="senses-preview">
+                    <div class="sense-badge">👁️ Sight</div>
+                    <div class="sense-badge">👂 Hearing</div>
+                    <div class="sense-badge">👃 Smell</div>
+                    <div class="sense-badge">👅 Taste</div>
+                    <div class="sense-badge">✋ Touch</div>
                 </div>
             </div>
             
-            <button class="btn-primary pulse-btn" id="startBtn" onclick="startGame()">
-                <span class="btn-text">Begin Quest</span>
+            <button class="btn-primary slide-up" style="--delay: 0.5s" onclick="startGame()">
+                <span class="btn-text">Begin Adventure</span>
                 <span class="btn-icon">→</span>
-                <div class="btn-shine"></div>
             </button>
             
-            <div class="stats-preview">
-                <div class="stat-mini">🏆 High Score: <span id="highScore">0</span></div>
-                <div class="stat-mini">🎯 Best Combo: <span id="bestComboEver">0</span>x</div>
-            </div>
-            
-            <div class="curriculum-tag">Unit 1: Scientific Skills • Malaysian Science Year 1</div>
+            <div class="curriculum-tag">Unit 1: Scientific Skills</div>
         </div>
 
         <!-- Game Screen -->
         <div class="screen game-screen">
-            <!-- Header with Stats -->
             <div class="game-header">
-                <div class="level-badge" id="levelBadge">Level 1</div>
                 <h2 class="section-heading">Match the Objects!</h2>
                 
-                <div class="stats-grid">
-                    <div class="stat-card">
+                <div class="stats-bar">
+                    <div class="stat">
                         <span class="stat-icon">⏱️</span>
                         <div class="stat-content">
                             <span class="stat-label">Time</span>
-                            <div class="stat-value-wrapper">
-                                <span class="stat-value" id="timer">0s</span>
-                                <div class="timer-bar" id="timerBar"></div>
-                            </div>
+                            <span class="stat-value" id="timer">0s</span>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat">
                         <span class="stat-icon">🎯</span>
                         <div class="stat-content">
                             <span class="stat-label">Score</span>
                             <span class="stat-value" id="score">0</span>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <span class="stat-icon">🔥</span>
-                        <div class="stat-content">
-                            <span class="stat-label">Combo</span>
-                            <span class="stat-value combo-counter" id="combo">0x</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
+                    <div class="stat">
                         <span class="stat-icon">⭐</span>
                         <div class="stat-content">
-                            <span class="stat-label">Stars</span>
+                            <span class="stat-label">Rating</span>
                             <span class="stat-value" id="stars">★★★</span>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Power-ups Bar -->
-            <div class="power-ups-bar">
-                <button class="power-up-btn" id="timeBoost" onclick="usePowerUp('time')" disabled>
-                    <span class="power-up-icon">⏱️</span>
-                    <span class="power-up-name">+10s</span>
-                    <span class="power-up-count" id="timeCount">3</span>
-                </button>
-                <button class="power-up-btn" id="hintBtn" onclick="usePowerUp('hint')" disabled>
-                    <span class="power-up-icon">💡</span>
-                    <span class="power-up-name">Hint</span>
-                    <span class="power-up-count" id="hintCount">2</span>
-                </button>
-                <button class="power-up-btn" id="skipBtn" onclick="usePowerUp('skip')" disabled>
-                    <span class="power-up-icon">❌</span>
-                    <span class="power-up-name">Skip</span>
-                    <span class="power-up-count" id="skipCount">1</span>
-                </button>
-            </div>
-            
-            <!-- Progress -->
             <div class="progress-container">
                 <div class="progress-track">
                     <div class="progress-fill" id="progressBar">
                         <span class="progress-text" id="progressText">0/10</span>
-                        <div class="progress-shine"></div>
                     </div>
                 </div>
-                <div class="milestone-markers" id="milestones"></div>
             </div>
             
-            <!-- Feedback -->
             <div class="feedback-container">
                 <div class="feedback" id="feedback"></div>
-                <div class="combo-display" id="comboDisplay"></div>
             </div>
             
-            <!-- Game Grid -->
             <div class="game-grid">
                 <div class="objects-panel">
-                    <div class="panel-header">
-                        <h3 class="panel-title">
-                            <span class="panel-icon">🎯</span>
-                            Objects
-                        </h3>
-                        <div class="panel-counter" id="objectsRemaining">10 left</div>
-                    </div>
+                    <h3 class="panel-title">
+                        <span class="panel-icon">🎯</span>
+                        Objects
+                    </h3>
                     <div class="objects-container" id="objectCards"></div>
                 </div>
                 
-                <div class="divider">
-                    <div class="divider-icon">✨</div>
-                </div>
+                <div class="divider"></div>
                 
                 <div class="senses-panel">
-                    <div class="panel-header">
-                        <h3 class="panel-title">
-                            <span class="panel-icon">👋</span>
-                            Your Senses
-                        </h3>
-                        <div class="hint-indicator" id="hintIndicator"></div>
-                    </div>
+                    <h3 class="panel-title">
+                        <span class="panel-icon">✨</span>
+                        Your Senses
+                    </h3>
                     <div class="senses-container">
                         <div class="sense-option" data-sense="sight" onclick="checkAnswer('sight')">
                             <div class="sense-icon-large">👁️</div>
-                            <div class="sense-content">
-                                <span class="sense-name">Sight</span>
-                                <span class="sense-desc">See & Observe</span>
-                            </div>
+                            <span class="sense-name">Sight</span>
                             <div class="sense-glow"></div>
-                            <div class="sense-particles"></div>
                         </div>
                         <div class="sense-option" data-sense="hearing" onclick="checkAnswer('hearing')">
                             <div class="sense-icon-large">👂</div>
-                            <div class="sense-content">
-                                <span class="sense-name">Hearing</span>
-                                <span class="sense-desc">Listen & Detect</span>
-                            </div>
+                            <span class="sense-name">Hearing</span>
                             <div class="sense-glow"></div>
-                            <div class="sense-particles"></div>
                         </div>
                         <div class="sense-option" data-sense="smell" onclick="checkAnswer('smell')">
                             <div class="sense-icon-large">👃</div>
-                            <div class="sense-content">
-                                <span class="sense-name">Smell</span>
-                                <span class="sense-desc">Sniff & Identify</span>
-                            </div>
+                            <span class="sense-name">Smell</span>
                             <div class="sense-glow"></div>
-                            <div class="sense-particles"></div>
                         </div>
                         <div class="sense-option" data-sense="taste" onclick="checkAnswer('taste')">
                             <div class="sense-icon-large">👅</div>
-                            <div class="sense-content">
-                                <span class="sense-name">Taste</span>
-                                <span class="sense-desc">Savor & Experience</span>
-                            </div>
+                            <span class="sense-name">Taste</span>
                             <div class="sense-glow"></div>
-                            <div class="sense-particles"></div>
                         </div>
                         <div class="sense-option" data-sense="touch" onclick="checkAnswer('touch')">
                             <div class="sense-icon-large">✋</div>
-                            <div class="sense-content">
-                                <span class="sense-name">Touch</span>
-                                <span class="sense-desc">Feel & Sense</span>
-                            </div>
+                            <span class="sense-name">Touch</span>
                             <div class="sense-glow"></div>
-                            <div class="sense-particles"></div>
                         </div>
                     </div>
                 </div>
@@ -274,97 +1072,449 @@
         <!-- End Screen -->
         <div class="screen end-screen">
             <div class="celebration-container">
-                <div class="confetti-container" id="confetti"></div>
-                <div class="fireworks" id="fireworks"></div>
-                
-                <div class="trophy-display">
-                    <div class="trophy-glow"></div>
-                    <div class="trophy-icon" id="trophyIcon">🏆</div>
-                    <div class="rank-badge" id="rankBadge">S Rank</div>
-                </div>
-                
+                <div class="confetti" id="confetti"></div>
+                <div class="trophy-icon" id="trophyIcon">🏆</div>
                 <h1 class="end-title">Quest Complete!</h1>
                 
-                <div class="score-showcase">
-                    <div class="final-score-card">
+                <div class="score-display">
+                    <div class="final-score">
                         <span class="score-label">Final Score</span>
                         <span class="score-number" id="finalScore">0</span>
-                        <div class="score-breakdown">
-                            <span>Base: <b id="baseScore">0</b></span>
-                            <span>Combo: <b id="comboBonus">0</b></span>
-                            <span>Speed: <b id="speedBonus">0</b></span>
-                        </div>
                     </div>
-                    <div class="star-showcase" id="finalStars"></div>
+                    <div class="star-rating" id="finalStars"></div>
                 </div>
                 
-                <div class="stats-showcase">
-                    <div class="stat-item">
-                        <span class="stat-icon">⏱️</span>
+                <div class="end-stats">
+                    <div class="end-stat">
+                        <span class="end-stat-icon">⏱️</span>
                         <div>
-                            <div class="stat-label">Time</div>
-                            <div class="stat-value"><span id="finalTime">0</span>s</div>
+                            <div class="end-stat-label">Time Taken</div>
+                            <div class="end-stat-value"><span id="finalTime">0</span>s</div>
                         </div>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">✅</span>
+                    <div class="end-stat">
+                        <span class="end-stat-icon">✅</span>
                         <div>
-                            <div class="stat-label">Accuracy</div>
-                            <div class="stat-value"><span id="accuracy">100</span>%</div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">🔥</span>
-                        <div>
-                            <div class="stat-label">Best Combo</div>
-                            <div class="stat-value"><span id="bestCombo">0</span>x</div>
-                        </div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">💎</span>
-                        <div>
-                            <div class="stat-label">Perfect</div>
-                            <div class="stat-value"><span id="perfectMatches">0</span></div>
+                            <div class="end-stat-label">Accuracy</div>
+                            <div class="end-stat-value"><span id="accuracy">100</span>%</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="achievements-container">
-                    <h3>🏅 Achievements Unlocked</h3>
-                    <div class="achievements-grid" id="achievementsList"></div>
-                </div>
-                
-                <div class="level-up-card" id="levelUpCard">
+                <div class="achievement-card">
                     <h3 id="achievementTitle">🌟 Senses Master!</h3>
-                    <p id="achievementMessage">You've mastered the art of observation!</p>
+                    <p id="achievementMessage">You've mastered the art of observation using all five senses!</p>
                 </div>
                 
                 <div class="end-actions">
-                    <button class="btn-secondary" onclick="viewStats()">
-                        <span class="btn-icon">📊</span>
-                        <span class="btn-text">View Stats</span>
-                    </button>
                     <button class="btn-primary" onclick="restartGame()">
                         <span class="btn-text">Play Again</span>
                         <span class="btn-icon">🔄</span>
-                        <div class="btn-shine"></div>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Achievement Popup -->
-    <div class="achievement-popup" id="achievementPopup">
-        <div class="achievement-content">
-            <span class="achievement-icon" id="popupIcon">🏆</span>
-            <div class="achievement-text">
-                <div class="achievement-name" id="popupName">Achievement Unlocked!</div>
-                <div class="achievement-desc" id="popupDesc">Description</div>
-            </div>
-        </div>
-    </div>
+    <script>
+// ====================================
+// game data and config
+// ====================================
+const gameObjects = [
+    { name: '🌈 Rainbow', sense: 'sight', emoji: '🌈', description: 'Beautiful colors in the sky' },
+    { name: '🔔 Bell', sense: 'hearing', emoji: '🔔', description: 'Makes a ringing sound' },
+    { name: '🌹 Rose', sense: 'smell', emoji: '🌹', description: 'Sweet fragrant flower' },
+    { name: '🍎 Apple', sense: 'taste', emoji: '🍎', description: 'Crisp and delicious' },
+    { name: '🧊 Ice Cube', sense: 'touch', emoji: '🧊', description: 'Cold and solid' },
+    { name: '⭐ Stars', sense: 'sight', emoji: '⭐', description: 'Twinkling lights above' },
+    { name: '🎵 Music', sense: 'hearing', emoji: '🎵', description: 'Pleasant melodies' },
+    { name: '☕ Coffee', sense: 'smell', emoji: '☕', description: 'Rich aroma' },
+    { name: '🍋 Lemon', sense: 'taste', emoji: '🍋', description: 'Sour citrus fruit' },
+    { name: '🔥 Warm Fire', sense: 'touch', emoji: '🔥', description: 'Heat and warmth' }
+];
 
-    <script src="script.js"></script>
+const senseColors = {
+    sight: '#667eea',
+    hearing: '#f093fb',
+    smell: '#26de81',
+    taste: '#feca57',
+    touch: '#fa709a'
+};
+
+// ====================================
+// game state variables
+// ====================================
+let currentObjects = [];
+let selectedObject = null;
+let score = 0;
+let correctAnswers = 0;
+let totalAttempts = 0;
+let timerInterval;
+let seconds = 0;
+let combo = 0;
+let bestCombo = 0;
+
+// ====================================
+// particle
+// ====================================
+function initParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        const size = Math.random() * 6 + 2;
+        const startX = Math.random() * 100;
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 5;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${startX}%`;
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.animationDelay = `${delay}s`;
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// ====================================
+// confetti
+// ====================================
+function createConfetti() {
+    const confettiContainer = document.getElementById('confetti');
+    const colors = ['#FF6B9D', '#FFA500', '#4ECDC4', '#95E1D3', '#FFE66D', '#667eea', '#f093fb'];
+    const confettiCount = 50;
+    
+    for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti-piece';
+        
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const startX = Math.random() * 100;
+        const delay = Math.random() * 0.5;
+        const duration = Math.random() * 2 + 2;
+        
+        confetti.style.left = `${startX}%`;
+        confetti.style.backgroundColor = color;
+        confetti.style.animationDelay = `${delay}s`;
+        confetti.style.animationDuration = `${duration}s`;
+        
+        confettiContainer.appendChild(confetti);
+    }
+}
+
+// ====================================
+// visual feedback
+// ====================================
+function createFloatingText(text, x, y, isCorrect) {
+    const floatingText = document.createElement('div');
+    floatingText.textContent = text;
+    floatingText.style.position = 'fixed';
+    floatingText.style.left = `${x}px`;
+    floatingText.style.top = `${y}px`;
+    floatingText.style.fontSize = '24px';
+    floatingText.style.fontWeight = 'bold';
+    floatingText.style.color = isCorrect ? '#26de81' : '#fc5c65';
+    floatingText.style.pointerEvents = 'none';
+    floatingText.style.zIndex = '1000';
+    floatingText.style.animation = 'floatUp 1s ease-out forwards';
+    
+    document.body.appendChild(floatingText);
+    
+    setTimeout(() => {
+        floatingText.remove();
+    }, 1000);
+}
+
+// ====================================
+// functions to control game flow
+// ====================================
+function startGame() {
+    // Transition screens
+    document.querySelector('.start-screen').classList.remove('active');
+    document.querySelector('.game-screen').classList.add('active');
+    
+    // Shuffle and prepare objects
+    currentObjects = [...gameObjects].sort(() => Math.random() - 0.5);
+    
+    // Reset game state
+    score = 0;
+    correctAnswers = 0;
+    totalAttempts = 0;
+    seconds = 0;
+    selectedObject = null;
+    combo = 0;
+    bestCombo = 0;
+    
+    // Display objects with staggered animation
+    displayObjects();
+    
+    // Start timer
+    timerInterval = setInterval(() => {
+        seconds++;
+        updateTimer();
+        updateStars();
+    }, 1000);
+    
+    // Update UI
+    updateScore();
+    updateProgress();
+    clearFeedback();
+}
+
+function displayObjects() {
+    const container = document.getElementById('objectCards');
+    container.innerHTML = '';
+    
+    currentObjects.forEach((obj, index) => {
+        const card = document.createElement('div');
+        card.className = 'object-card';
+        card.id = `object-${index}`;
+        card.textContent = obj.name;
+        card.onclick = () => selectObject(index);
+        card.style.animationDelay = `${index * 0.05}s`;
+        card.style.animation = 'slideIn 0.4s ease-out forwards';
+        container.appendChild(card);
+    });
+}
+
+function selectObject(index) {
+    const obj = currentObjects[index];
+    const card = document.getElementById(`object-${index}`);
+    
+    // Don't select disabled cards
+    if (card.classList.contains('disabled')) return;
+    
+    // Deselect previous
+    document.querySelectorAll('.object-card').forEach(c => {
+        c.classList.remove('selected');
+    });
+    
+    // Select new
+    card.classList.add('selected');
+    selectedObject = index;
+    
+    // Update feedback
+    showFeedback(`Great! Now which sense helps you observe the ${obj.emoji}?`, 'neutral');
+}
+
+function checkAnswer(sense) {
+    if (selectedObject === null) {
+        showFeedback('⚠️ Please select an object first!', 'neutral');
+        return;
+    }
+
+    const obj = currentObjects[selectedObject];
+    const card = document.getElementById(`object-${selectedObject}`);
+    totalAttempts++;
+    
+    if (obj.sense === sense) {
+        // CORRECT ANSWER
+        const points = 10 + (combo * 2); // Bonus points for combo
+        score += points;
+        correctAnswers++;
+        combo++;
+        bestCombo = Math.max(bestCombo, combo);
+        
+        // Visual feedback
+        card.classList.add('disabled');
+        card.classList.remove('selected');
+        
+        // Get card position for floating text
+        const rect = card.getBoundingClientRect();
+        createFloatingText(`+${points}`, rect.left + rect.width / 2, rect.top, true);
+        
+        // Show success message
+        const messages = [
+            `✨ Perfect! ${obj.description}`,
+            `🎯 Excellent! You use ${sense} to observe ${obj.emoji}`,
+            `🌟 Amazing! That's right!`,
+            `💫 Brilliant! ${sense} it is!`
+        ];
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        showFeedback(message + (combo > 1 ? ` | 🔥 ${combo}x Combo!` : ''), 'correct');
+        
+        updateScore();
+        updateProgress();
+        
+        // Check if game complete
+        if (correctAnswers === currentObjects.length) {
+            setTimeout(endGame, 1500);
+        }
+        
+    } else {
+        // WRONG ANSWER
+        combo = 0; // Reset combo
+        score = Math.max(0, score - 2);
+        
+        // Get sense option position for floating text
+        const senseOption = document.querySelector(`[data-sense="${sense}"]`);
+        const rect = senseOption.getBoundingClientRect();
+        createFloatingText('-2', rect.left + rect.width / 2, rect.top, false);
+        
+        // Show error message
+        const hints = [
+            `❌ Not quite! Think about how you observe ${obj.emoji}`,
+            `🤔 Try again! What do you use to notice ${obj.emoji}?`,
+            `💭 Close! Consider how you experience ${obj.emoji}`
+        ];
+        const hint = hints[Math.floor(Math.random() * hints.length)];
+        showFeedback(hint, 'wrong');
+        
+        // Shake animation
+        card.style.animation = 'shake 0.5s';
+        setTimeout(() => {
+            card.style.animation = '';
+        }, 500);
+        
+        updateScore();
+    }
+    
+    selectedObject = null;
+}
+
+function showFeedback(message, type) {
+    const feedback = document.getElementById('feedback');
+    feedback.textContent = message;
+    feedback.className = `feedback ${type}`;
+}
+
+function clearFeedback() {
+    const feedback = document.getElementById('feedback');
+    feedback.textContent = '';
+    feedback.className = 'feedback';
+}
+
+function updateScore() {
+    document.getElementById('score').textContent = score;
+}
+
+function updateTimer() {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    const timeStr = minutes > 0 
+        ? `${minutes}:${secs.toString().padStart(2, '0')}`
+        : `${secs}s`;
+    document.getElementById('timer').textContent = timeStr;
+}
+
+function updateProgress() {
+    const progress = (correctAnswers / currentObjects.length) * 100;
+    const progressBar = document.getElementById('progressBar');
+    progressBar.style.width = progress + '%';
+    document.getElementById('progressText').textContent = `${correctAnswers}/${currentObjects.length}`;
+}
+
+function updateStars() {
+    let starDisplay = '★★★';
+    if (seconds > 60) starDisplay = '★★☆';
+    if (seconds > 90) starDisplay = '★☆☆';
+    document.getElementById('stars').textContent = starDisplay;
+}
+
+function endGame() {
+    clearInterval(timerInterval);
+    
+    // Transition screens
+    document.querySelector('.game-screen').classList.remove('active');
+    document.querySelector('.end-screen').classList.add('active');
+    
+    // Create confetti
+    createConfetti();
+    
+    // Calculate accuracy
+    const accuracy = Math.round((correctAnswers / totalAttempts) * 100);
+    
+    // Calculate final stars and achievement
+    let finalStars = '★★★';
+    let achievementTitle = '🏆 Legendary Senses Master!';
+    let achievementMessage = 'Absolutely incredible! You have perfect observation skills!';
+    let trophyEmoji = '🏆';
+    
+    if (seconds > 60 || accuracy < 95) {
+        finalStars = '★★☆';
+        achievementTitle = '🌟 Senses Expert!';
+        achievementMessage = 'Great work! You have excellent observation skills!';
+        trophyEmoji = '🎉';
+    }
+    if (seconds > 90 || accuracy < 80) {
+        finalStars = '★☆☆';
+        achievementTitle = '⭐ Senses Explorer!';
+        achievementMessage = 'Good effort! Keep practicing to sharpen your senses!';
+        trophyEmoji = '👍';
+    }
+    
+    // Update end screen
+    document.getElementById('finalScore').textContent = score;
+    document.getElementById('finalTime').textContent = seconds;
+    document.getElementById('accuracy').textContent = accuracy;
+    document.getElementById('finalStars').textContent = finalStars;
+    document.getElementById('achievementTitle').textContent = achievementTitle;
+    document.getElementById('achievementMessage').textContent = achievementMessage;
+    document.getElementById('trophyIcon').textContent = trophyEmoji;
+}
+
+function restartGame() {
+    // Clear confetti
+    document.getElementById('confetti').innerHTML = '';
+    
+    // Transition screens
+    document.querySelector('.end-screen').classList.remove('active');
+    document.querySelector('.start-screen').classList.add('active');
+}
+
+// ====================================
+// initialize particles on load
+// ====================================
+document.addEventListener('DOMContentLoaded', () => {
+    initParticles();
+});
+
+// ====================================
+// keyboard controls
+// ====================================
+document.addEventListener('keydown', (e) => {
+    // Number keys 1-5 for selecting senses during gameplay
+    if (document.querySelector('.game-screen').classList.contains('active')) {
+        const senseMap = {
+            '1': 'sight',
+            '2': 'hearing',
+            '3': 'smell',
+            '4': 'taste',
+            '5': 'touch'
+        };
+        
+        if (senseMap[e.key]) {
+            checkAnswer(senseMap[e.key]);
+        }
+    }
+    
+    // Space or Enter to start/restart
+    if (e.key === ' ' || e.key === 'Enter') {
+        if (document.querySelector('.start-screen').classList.contains('active')) {
+            e.preventDefault();
+            startGame();
+        } else if (document.querySelector('.end-screen').classList.contains('active')) {
+            e.preventDefault();
+            restartGame();
+        }
+    }
+});
+
+// ====================================
+// improvements: hover sound effect
+// ====================================
+// Add hover sound effect simulation (visual only, no actual sound)
+document.addEventListener('mouseover', (e) => {
+    if (e.target.classList.contains('sense-option') || 
+        e.target.classList.contains('object-card') ||
+        e.target.classList.contains('btn-primary')) {
+        // Visual feedback only - could add Web Audio API sounds here. to be implemented later hehe.
+    }
+});
+    </script>
 </body>
 </html>
